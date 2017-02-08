@@ -1,0 +1,149 @@
+sudo usermod -a -G dialout $USER
+sudo add-apt-repository ppa:george-edison55/cmake-3.x -y
+sudo apt-get update
+sudo apt-get install python-argparse git-core wget zip \
+    python-empy qtcreator cmake build-essential genromfs -y
+# simulation tools
+sudo apt-get install ant protobuf-compiler libeigen3-dev libopencv-dev openjdk-8-jdk openjdk-8-jre clang-3.5 lldb-3.5 -y
+
+sudo apt-get remove modemmanager
+
+sudo apt-get install python-serial openocd \
+    flex bison libncurses5-dev autoconf texinfo build-essential \
+    libftdi-dev libtool zlib1g-dev \
+    python-empy  -y
+
+sudo apt-get remove gcc-arm-none-eabi gdb-arm-none-eabi binutils-arm-none-eabi gcc-arm-embedded
+sudo add-apt-repository --remove ppa:team-gcc-arm-embedded/ppa
+
+sudo apt-get install ros-kinetic-robot-model urdf kdl_parser robot-state-publisher collada-urdf
+
+pushd .
+cd ~
+wget https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q3-update/+download/gcc-arm-none-eabi-4_9-2015q3-20150921-linux.tar.bz2
+tar -jxf gcc-arm-none-eabi-4_9-2015q3-20150921-linux.tar.bz2
+exportline="export PATH=$HOME/gcc-arm-none-eabi-4_9-2015q3/bin:\$PATH"
+if grep -Fxq "$exportline" ~/.profile; then echo nothing to do ; else echo $exportline >> ~/.profile; fi
+. ~/.profile
+popd
+
+
+for rotors_gazebo
+octomap mav_msgs
+sudo pip install empy
+sudo pip install empy
+sudo apt-get install ros-kinetic-joy
+
+
+source Tools/setup_gazebo.bash $(pwd) $(pwd)/build_posix_sitl_default
+export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:$(pwd)
+export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:$(pwd)/Tools/sitl_gazebo
+roslaunch px4 posix_sitl.launch
+
+source Tools/setup_gazebo.bash $(pwd) $(pwd)/build_posix_sitl_default
+export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:$(pwd)
+export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:$(pwd)/Tools/sitl_gazebo
+roslaunch px4 custom_sitl.launch
+
+
+source ~/catkin_ws/devel/setup.bash
+source Tools/setup_gazebo.bash $(pwd) $(pwd)/build_posix_sitl_default
+export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:$(pwd)
+export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:$(pwd)/Tools/sitl_gazebo
+roslaunch px4 camera_iris_sitl.launch
+
+--- uctf
+
+export INSTALL_SPACE=/opt/sasc
+. ${INSTALL_SPACE}/setup.bash
+. ${INSTALL_SPACE}/share/gazebo-8/setup.sh
+. ${INSTALL_SPACE}/share/uctf/setup.sh
+export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:${INSTALL_SPACE}/share/gazebo_models
+
+spawn_blue 1 26 --acs enp0s25
+
+unsupported FCU problem
+
+--- catkin config --cmake-args -DMAVLINK_DIALECT=common
+
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/src
+catkin_init_workspace
+cd ~/catkin_ws/
+catkin_make
+source ~/catkin_ws/devel/setup.bash
+
+UDP: udp://[bind_host][:port]@[remote_host][:port][/?ids=sysid,compid]
+
+roslaunch mavros px4.launch fcu_url:="udp://:14540@127.0.0.1:14557"
+
+roslaunch mavros px4.launch fcu_url:="udp://:14580@127.0.0.1:14556"
+
+/home/swimming/catkin_ws/src/Firmware/posix-configs/SITL/init/lpe
+
+sudo passwd root
+
+wget https://raw.githubusercontent.com/oroca/oroca-ros-pkg/kinetic/ros_install.sh && chmod 755 ./ros_install.sh && bash ./ros_install.sh catkin_ws kinetic
+
+sudo rm /var/lib/apt/lists/lock
+
+sudo rm /var/cache/apt/archives/lock
+sudo rm /var/lib/dpkg/lock
+
+[출처] ROS Kinetic 1줄 설치! (오픈소스 소프트웨어 & 하드웨어: 로봇 기술 공유 카페 (오로카)) |작성자 표윤석
+
+Ubuntu - 16.04 한글 설정
+2016-07-02
+ubuntu
+
+기본으로 설치시 English만 설치되었다고 가정하고 한글 설치와 한영 전환 설정하는 것을 어떻게 하는지 알아보자.
+한글 설치
+
+    sudo apt-get install fcitx-hangul로 한글을 설치한다.
+    System Settings > Language Support를 실행해서 아직 완전히 설치되지 않다고 표시되는데 잠시 기다려서 모두 설치한다.
+    Keyboard input method system:을 ibus가 아닌 fcitx로 변경한다.
+    재부팅한다.
+
+한영 전환 설정
+Shortcut 설정
+
+    AllSettings > Keyboard > Shortcuts Tab > Typing을 선택한다.
+    Switch to Next source, Switch to Previous sourc, Compose Key, Alternative Characters Key를 모두 Disabled로 선택한다. Disabled로 선택하기 위해서는 backspace를 누르면 된다.
+    Compose Key의 Disabled를 길게 눌러 Right Alt를 선택한다.
+    Switch to next source는 한영키를 눌러 Multikey를 선택한다. 반드시 Compose Key 설정이 먼저되어야 Multikey를 선택할 수 있다.
+    AllSetting 윈도우를 닫고 상단 메뉴바 오른쪽의 입력기 선택하는 것을 본다. 키보드 표시가 된 것이 fcitx이다. fcitx아이콘을 눌러서 Configure Current Input Method를 선택한다.
+    Keyboard-English(US)가 있다면 +를 눌러 Hangul을 추가한다. (Uncheck “Only Show Current Language”). Korean이 아닌 Hangul이여야 한다.
+    Global Config tab에서 Trigger Input Method는 한/영키를 눌러 Multikey로 설정(왼쪽 오른쪽 모두)하고 Extrakey for trigger input method는 Disabled로 설정한다. (Mac에서는 command key이므로 대신 shift+space를 선택한다.)
+    Global Config tab에서 Program > Share State Among Window > All을 선택한다.
+
+테스트
+
+    log out을 한후 다시 log in을 한다.
+    한글/영어가 한영키로 전환되는지 확인한다.
+
+sudo add-apt-repository ppa:eugenesan/ppa
+sudo apt-get update
+sudo apt-get install smartgit 
+
+make posix gazebo_iris_opt_flow
+
+    <include>
+      <uri>model://camera</uri>
+      <pose>0.14 0 0.04 0 0 0</pose>
+    </include>
+    <joint name="camera_joint" type="revolute">
+      <child>camera::link</child>
+      <parent>iris::base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>0</lower>
+        </limit>
+      </axis>
+    </joint>
+
+~/iris/camera/link/camera/image
+
+http://answers.gazebosim.org/question/14619/how-to-convert-gazebos-constimagestamped-to-cvmat/
+

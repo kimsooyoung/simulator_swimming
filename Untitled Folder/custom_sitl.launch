@@ -1,0 +1,58 @@
+<launch>
+
+    <!-- Posix SITL environment launch script -->
+    <arg name="x" default="0"/>
+    <arg name="x2" default="2"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="0"/>
+    <arg name="R" default="0"/>
+    <arg name="P" default="0"/>
+    <arg name="Y" default="0"/>
+
+
+    <arg name="est" default="lpe"/>
+    <arg name="vehicle" default="iris"/>
+    <arg name="vehicle2" default="iris2"/>
+    <arg name="world" default="$(find mavlink_sitl_gazebo)/worlds/empty.world"/>
+    <arg name="sdf" default="$(find mavlink_sitl_gazebo)/models/$(arg vehicle)/$(arg vehicle).sdf"/>
+    <arg name="sdf2" default="$(find mavlink_sitl_gazebo)/models/$(arg vehicle)/$(arg vehicle2).sdf"/>
+
+    <arg name="rcS" default="$(find px4)/posix-configs/SITL/init/$(arg est)/$(arg vehicle)"/>
+    <arg name="rcS2" default="$(find px4)/posix-configs/SITL/init/$(arg est)/$(arg vehicle2)"/>
+
+    <arg name="headless" default="false"/>
+    <arg name="gui" default="true"/>
+    <arg name="ns" default="/"/>
+
+    <arg name="debug" default="false"/>
+    <arg name="verbose" default="false"/>
+    <arg name="paused" default="false"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="headless" value="$(arg headless)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="world_name" value="$(arg world)" />
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="verbose" value="$(arg verbose)" />
+        <arg name="paused" value="$(arg paused)" />
+    </include>
+
+    <group ns="iris1">
+        <node name="sitl" pkg="px4" type="px4" output="screen"
+            args="$(find px4) $(arg rcS)">
+        </node>
+        <node name="$(anon vehicle_spawn)" output="screen" pkg="gazebo_ros" type="spawn_model"
+            args="-sdf -file $(arg sdf) -model $(arg vehicle) -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y)"/>
+    </group>
+
+    <group ns="iris2">
+        <node name="sitl2" pkg="px4" type="px4" output="screen"
+            args="$(find px4) $(arg rcS2)">
+        </node>
+        <node name="$(anon vehicle_spawn2)" output="screen" pkg="gazebo_ros" type="spawn_model"
+            args="-sdf -file $(arg sdf2) -model $(arg vehicle2) -x $(arg x2) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y)"/>
+    </group>
+
+</launch>
+
+<!-- vim: set et ft=xml fenc=utf-8 ff=unix sts=0 sw=4 ts=4 : -->
