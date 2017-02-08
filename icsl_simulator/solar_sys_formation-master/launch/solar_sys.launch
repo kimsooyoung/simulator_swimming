@@ -1,0 +1,35 @@
+<launch>
+
+<arg name="fcu_url" default= "udp://:14540@127.0.0.1:14557"/>
+<arg name="gcs_url" default="" />
+<arg name="tgt_system" default="1" />
+<arg name="tgt_component" default="1" />
+
+
+<node name="mavros_earth" pkg="mavros" type="mavros_node" output="screen">
+	<!--param name="fcu_url" value="/dev/ttyUSB0:57600"-->
+ 	<param name="fcu_url" value="udp://:14540@127.0.0.1:14557"/>
+	<param name="gcs_url" value="$(arg gcs_url)" />
+	<param name="target_system_id" value="1" />
+	<param name="target_component_id" value="1" />
+</node>
+<node name="earth_node" pkg="solar_sys_formation" type="earth_node" output="screen">
+</node>
+
+<node name="mavros_moon" pkg="mavros" type="mavros_node" output="screen">
+	<!--param name="fcu_url" value="/dev/ttyUSB0:57600"-->
+	<param name="fcu_url" value="udp://:14580@127.0.0.1:14558"/>
+	<param name="gcs_url" value="$(arg gcs_url)" />
+	<param name="target_system_id" value="1" />
+	<param name="target_component_id" value="1" />
+</node>
+
+
+<node name="moon_node" pkg="solar_sys_formation" type="moon_node" output="screen">
+</node>
+
+
+
+
+</launch>
+
